@@ -7,13 +7,22 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import ph.edu.up.ics.vtmapp.mobiledatabase.daos.RecordDao;
-import ph.edu.up.ics.vtmapp.mobiledatabase.tables.Record;
+import ph.edu.up.ics.vtmapp.mobiledatabase.daos.DeploymentDao;
+import ph.edu.up.ics.vtmapp.mobiledatabase.daos.DeploymentWaypointDao;
+import ph.edu.up.ics.vtmapp.mobiledatabase.daos.RetrievalDao;
+import ph.edu.up.ics.vtmapp.mobiledatabase.daos.RetrievalWaypointDao;
+import ph.edu.up.ics.vtmapp.mobiledatabase.tables.DeploymentTable;
+import ph.edu.up.ics.vtmapp.mobiledatabase.tables.DeploymentWaypointTable;
+import ph.edu.up.ics.vtmapp.mobiledatabase.tables.RetrievalTable;
+import ph.edu.up.ics.vtmapp.mobiledatabase.tables.RetrievalWaypointTable;
 
-@Database(entities = {Record.class}, version = 1)
+@Database(entities = {DeploymentTable.class, DeploymentWaypointTable.class, RetrievalTable.class, RetrievalWaypointTable.class}, version = 1)
 public abstract class VTDatabase extends RoomDatabase {
     private static VTDatabase vtDatabaseInstance = null;
-    public abstract RecordDao recordDao();
+    public abstract DeploymentDao deploymentDao();
+    public abstract DeploymentWaypointDao deploymentWaypointDao();
+    public abstract RetrievalDao retrievalDao();
+    public abstract RetrievalWaypointDao retrievalWaypointDao();
 
     public static VTDatabase getInstance(Context context){
         if (vtDatabaseInstance == null){
@@ -24,26 +33,90 @@ public abstract class VTDatabase extends RoomDatabase {
         return vtDatabaseInstance;
     }
 
-    public static class AsyncInsertRecord extends AsyncTask<Void, Void, Void> {
+    public static class AsyncInsertDeploymentRecord extends AsyncTask<Void, Void, Void> {
         private VTDatabase db;
-        private int sessionId;
+        private int operationId;
+        private int deploymentId;
         private double latitude;
         private double longitude;
-        private double heading;
-        private double speed;
 
-        public AsyncInsertRecord(VTDatabase db, int sessionId, double latitude, double longitude, double heading, double speed){
+        public AsyncInsertDeploymentRecord(VTDatabase db, int operationId, int deploymentId, double latitude, double longitude){
             this.db = db;
-            this.sessionId = sessionId;
+            this.operationId = operationId;
+            this.deploymentId = deploymentId;
             this.latitude = latitude;
             this.longitude = longitude;
-            this.heading = heading;
-            this.speed = speed;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            db.recordDao().insertRecord(new Record(sessionId, latitude, longitude, heading, speed));
+            db.deploymentDao().insertRecord(new DeploymentTable(operationId, deploymentId, latitude, longitude));
+            return null;
+        }
+    }
+
+    public static class AsyncInsertDeploymentWaypointRecord extends AsyncTask<Void, Void, Void> {
+        private VTDatabase db;
+        private int operationId;
+        private int deploymentId;
+        private double latitude;
+        private double longitude;
+
+        public AsyncInsertDeploymentWaypointRecord(VTDatabase db, int operationId, int deploymentId, double latitude, double longitude){
+            this.db = db;
+            this.operationId = operationId;
+            this.deploymentId = deploymentId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.deploymentWaypointDao().insertRecord(new DeploymentWaypointTable(operationId, deploymentId, latitude, longitude));
+            return null;
+        }
+    }
+
+    public static class AsyncInsertRetrievalRecord extends AsyncTask<Void, Void, Void> {
+        private VTDatabase db;
+        private int operationId;
+        private int retrievalId;
+        private double latitude;
+        private double longitude;
+
+        public AsyncInsertRetrievalRecord(VTDatabase db, int operationId, int retrievalId, double latitude, double longitude){
+            this.db = db;
+            this.operationId = operationId;
+            this.retrievalId = retrievalId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.retrievalDao().insertRecord(new RetrievalTable(operationId, retrievalId, latitude, longitude));
+            return null;
+        }
+    }
+
+    public static class AsyncInsertRetrievalWaypointRecord extends AsyncTask<Void, Void, Void> {
+        private VTDatabase db;
+        private int operationId;
+        private int retrievalId;
+        private double latitude;
+        private double longitude;
+
+        public AsyncInsertRetrievalWaypointRecord(VTDatabase db, int operationId, int retrievalId, double latitude, double longitude){
+            this.db = db;
+            this.operationId = operationId;
+            this.retrievalId = retrievalId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.retrievalWaypointDao().insertRecord(new RetrievalWaypointTable(operationId, retrievalId, latitude, longitude));
             return null;
         }
     }
@@ -55,7 +128,10 @@ public abstract class VTDatabase extends RoomDatabase {
         }
         @Override
         protected Void doInBackground(Void... voids) {
-            db.recordDao().nukeRecords();
+            db.deploymentDao().nukeRecords();
+            db.deploymentWaypointDao().nukeRecords();
+            db.retrievalDao().nukeRecords();
+            db.retrievalWaypointDao().nukeRecords();
             return null;
         }
     }
