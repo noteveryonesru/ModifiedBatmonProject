@@ -5,22 +5,22 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class OperationJson {
-    @SerializedName("StartTime")
+    @SerializedName("startTime")
     public String startTime;
-    @SerializedName("EndTime")
+    @SerializedName("endTime")
     public String endTime;
-    @SerializedName("ArrayOfDeployments")
-    public List<DeploymentJson> arrayOfDeployments;
-    @SerializedName("ArrayOfRetrievals")
-    public List<RetrievalJson> arrayOfRetrievals;
-    @SerializedName("ArrayOfTags")
-    public List<String> arrayOfTags;
+    @SerializedName("gearName")
+    public String gearName;
+    @SerializedName("tracks")
+    public List<TrackJson> tracks;
+    @SerializedName("tags")
+    public List<String> tags;
 
-    public OperationJson(String startTime, String endTime, List<DeploymentJson> arrayOfDeployments, List<RetrievalJson> arrayOfRetrievals, List<String> arrayOfTags){
+    public OperationJson(String startTime, String endTime, String gearName, List<TrackJson> tracks, List<String> tags){
         this.startTime = startTime;
         this.endTime = endTime;
-        this.arrayOfDeployments = arrayOfDeployments;
-        this.arrayOfRetrievals = arrayOfRetrievals;
-        this.arrayOfTags = arrayOfTags;
+        this.gearName = gearName;
+        this.tracks = tracks;
+        this.tags = tags;
     }
 }
